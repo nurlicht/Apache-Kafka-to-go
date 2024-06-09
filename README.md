@@ -11,7 +11,11 @@ Simplified execution of the Quickstart for Apache Kafka Streams ([Code](https://
 ## Requirements
 Support for docker-compose locally ([DockerDesktop](https://www.docker.com/products/docker-desktop/)) or on a server ([GitHub Actions](https://github.com/hoverkraft-tech/compose-action))
 
-## Execution (locally)
+## Modes of Local Execution
+  - Java-client on the Kafka-Server
+  - Java-client in another JVM
+
+## Execution (Locally, Java-Client on the Kafka-Server)
 1. Clone this repository.
     - The local path will be referred to as `<path>`.
 2. Start DockerDesktop.
@@ -36,3 +40,21 @@ Support for docker-compose locally ([DockerDesktop](https://www.docker.com/produ
     - Terminal 4: Monitor the appearance of new and repeated words and the associated word-count (histogram).
 10. Check out the documentation ([Code](https://github.com/apache/kafka/tree/trunk/streams/quickstart) and [Explanations](https://kafka.apache.org/24/documentation/streams/tutorial)).
 
+## Execution (Locally, Java-Client in another JVM)
+Same as the previous case, except for Step 6:
+  - Make sure JDK (8+) and Maven are installed on the local machine.
+  - Build the project with Maven: `mvn clean package`
+  - Start the project with Maven: `mvn exec:java -Dexec.mainClass=org.example.kafka.streams.demo.WordCount`
+
+Is the KafkaStreams client as fast as the previous case?
+
+## Cleanup
+  - Stop the consumer
+  - Stop the producer
+  - Stop KafkaStreams
+  - Stop Kafka
+  - Stop the Kafka container (DockerDesktop >> Containers)
+  - Delete the Kafka container (DockerDesktop >> Containers)
+  - Delete the volumes associated with the Kafka container (DockerDesktop >> Volumes)
+  - Close DockerDesktop
+  - Inspect and delete this local (Windows) folder, if any: `<home>/AppData/Local/Temp/kafka-streams`
