@@ -41,10 +41,10 @@ Support for docker-compose locally ([DockerDesktop](https://www.docker.com/produ
 10. Check out the documentation ([Code](https://github.com/apache/kafka/tree/trunk/streams/quickstart) and [Explanations](https://kafka.apache.org/24/documentation/streams/tutorial)).
 
 ## Execution (Locally, Java-Client in another JVM)
-Same as the previous case, except for Step 6:
+Same as the previous case, except for Step 5:
   - Make sure JDK (8+) and Maven are installed on the local machine.
   - Build the project with Maven: `mvn clean package`
-  - Start the project with Maven: `mvn exec:java -Dexec.mainClass=org.example.kafka.streams.demo.WordCount`
+  - Start the project with Maven: `java -jar ./target/kafka.streams.demo-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
 Is the KafkaStreams client as fast as the previous case?
 
@@ -56,5 +56,7 @@ Is the KafkaStreams client as fast as the previous case?
   - Stop the Kafka container (DockerDesktop >> Containers)
   - Delete the Kafka container (DockerDesktop >> Containers)
   - Delete the volumes associated with the Kafka container (DockerDesktop >> Volumes)
-  - Close DockerDesktop
+  - Run `docker system prune --volumes --force`
+  - _Quit_ (not just close) DockerDesktop
+  - Run (Windows with WSL): `wsl --shutdown`
   - Inspect and delete this local (Windows) folder, if any: `<home>/AppData/Local/Temp/kafka-streams`
