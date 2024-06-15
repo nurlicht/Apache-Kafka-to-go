@@ -3,13 +3,13 @@ version: '3'
 services:
 
   kafka1:
-    image: apache/kafka:3.7.0
+    image: confluentinc/cp-kafka:7.6.1
     container_name: kafka1
     ports:
       - "9092:9092"
       - "9093:9093"
     environment:
-      CLUSTER_ID: 1
+      CLUSTER_ID: UUrxjPeJa7xsDDoxQOfGgw==
       KAFKA_BROKER_ID: 1
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker
@@ -22,13 +22,13 @@ services:
       - kafka-network
 
   kafka2:
-    image: apache/kafka:3.7.0
+    image: confluentinc/cp-kafka:7.6.1
     container_name: kafka2
     ports:
       - "9094:9092"
       - "9095:9093"
     environment:
-      CLUSTER_ID: 1
+      CLUSTER_ID: UUrxjPeJa7xsDDoxQOfGgw==
       KAFKA_BROKER_ID: 2
       KAFKA_NODE_ID: 2
       KAFKA_PROCESS_ROLES: broker
@@ -42,13 +42,13 @@ services:
 
       
   kafka3:
-    image: apache/kafka:3.7.0
+    image: confluentinc/cp-kafka:7.6.1
     container_name: kafka3
     ports:
       - "9096:9092"
       - "9097:9093"
     environment:
-      CLUSTER_ID: 1
+      CLUSTER_ID: UUrxjPeJa7xsDDoxQOfGgw==
       KAFKA_BROKER_ID: 3
       KAFKA_NODE_ID: 3
       KAFKA_PROCESS_ROLES: broker
@@ -61,13 +61,13 @@ services:
       - kafka-network
 
   kafka4:
-    image: apache/kafka:3.7.0
+    image: confluentinc/cp-kafka:7.6.1
     container_name: kafka4
     ports:
       - "9098:9092"
       - "9099:9093"
     environment:
-      CLUSTER_ID: 1
+      CLUSTER_ID: UUrxjPeJa7xsDDoxQOfGgw==
       KAFKA_NODE_ID: 4
       KAFKA_PROCESS_ROLES: controller
       KAFKA_CONTROLLER_QUORUM_VOTERS: 4@kafka4:9093    
