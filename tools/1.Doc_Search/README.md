@@ -7,4 +7,5 @@ Assigning Kafka configuration-properties to "Kafka Elements" (Topic, Producer, C
 ![](screenshot.png)
 
 ## Execution
-Double-click on [config-param-assigner.html](./config-param-assigner.html)
+- Local: Launch [config-param-assigner.html](./config-param-assigner.html)
+- GitHub: [HTML Preview](https://htmlpreview.github.io/?https://github.com/nurlicht/Apache-Kafka-to-go/blob/main/tools/1.Doc_Search/config-param-assigner.html)
