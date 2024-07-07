@@ -1,0 +1,104 @@
+<html>
+  <head>
+    <script>
+        class RestController {
+            static get(url, token) {
+              const xhr = new XMLHttpRequest();
+              xhr.open('GET', url, true);
+              xhr.setRequestHeader('Accept', 'text/html');
+              const result = RestController.createPromiseForHttpResponse(xhr);
+              xhr.send();
+              return result;            
+            }
+          
+            static createPromiseForHttpResponse(xhr) {
+              return new Promise((resolve, reject) => {
+                xhr.onreadystatechange = () => {
+                  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    resolve(xhr.responseText);
+                  }
+                };
+              });
+            }
+          }
+
+          class StringParser {
+            index;
+            token;
+
+            constructor(index, token) {
+              this.index = index;
+              this.token = token;
+            }
+          }
+
+          class KafkaDocService {
+            static setElements(version, property, elementConsumer) {
+              RestController.get("https://kafka.apache.org/" + version + "/documentation/", null)
+                .then((t) => {
+                  const tLength = t.length;
+                  const kafkaElements = [];
+                  let stringParser = new StringParser(0, null);
+                  while (stringParser.index > -1 && stringParser.index < tLength) {
+                    stringParser = KafkaDocService.getNextIndexAndKafkaElement(t, property, stringParser.index);
+                    if (stringParser.token !== null) {
+                      kafkaElements.push(stringParser.token);
+                    }
+                  }
+                  elementConsumer(kafkaElements);
+                });
+            }
+ 
+            static getNextIndexAndKafkaElement(t, property, currentIndex) {
+              const index1 = t.indexOf('id="' + property + '"', currentIndex);
+              if (index1 < 0) {
+                return new StringParser(index1, null);
+              }
+              const index2 = t.indexOf('<a id="', index1);
+              const index3 = t.indexOf('" href="', index2);
+              const kafkaElement = t.substring(index2 + '<a id="'.length, index3)
+                .replace('configs_', '')
+                .replace(property, '');
+                return new StringParser(index3 + 1, kafkaElement);
+            }
+          }
+
+          class DomService {
+            static setElements() {
+              const version = document.getElementById('kafka-version').children[1].value.replaceAll('.','').substring(0, 2);
+              const property = document.getElementById('property').children[1].value;
+              const elementConsumer = (x) => document.getElementById('element').children[1].value = x;
+              KafkaDocService.setElements(version, property, elementConsumer);
+            }
+          }
+
+          class App {
+            static start() {
+              DomService.setElements();
+            }
+          }
+
+    </script>
+  </head>
+  <body>
+    <div id='kafka-version'>
+      <label>Kafka Version</label>
+      <input type='text'>
+    </div>
+    <br />  
+    <div id='property'>
+      <label>Configuration Property</label>
+      <input type="text">
+    </div>
+    <br />  
+    <div id='submit'>
+      <button type='button' onclick='App.start()'>Submit</button>
+    </div>
+    <br />  
+    <br />  
+    <div id='element'>
+      <label>Kafka Element(s)</label>
+      <input type="text" style="width: 300px;">
+    </div>
+  </body>
+</html>
