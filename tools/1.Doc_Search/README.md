@@ -1,4 +1,4 @@
-# Topic Replica
+# Assignment of Configuration Parameters
 
 ## Goal
 Assigning Kafka configuration-properties to "Kafka Elements" (Topic, Producer, Consumer ....)
