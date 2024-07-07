@@ -77,12 +77,40 @@
             static setElements() {
               const version = document.getElementById('kafka-version').children[1].value.replaceAll('.','').substring(0, 2);
               const property = document.getElementById('property').children[1].value;
-              const elementConsumer = (x, y) => {
-                document.getElementById('element').children[1].value = x;
-                document.getElementById('text').children[0].outerHTML = y;
-                document.getElementById('text').children[0].style.visibility = 'visible';
+              const elementConsumer = (X, Y) => {
+                DomService.clearResults();
+                DomService.render(X, Y, DomService.getResults());
               };
               KafkaDocService.setElements(version, property, elementConsumer);
+            }
+
+            static removeChildren(element) {
+              while (element.hasChildNodes()) {
+                element.lastChild.remove();
+              }
+            }
+
+            static clearResults() {
+              DomService.removeChildren(DomService.getResults());
+            }
+
+            static render(X, Y, parent) {
+              X.forEach((x, i) => {
+                const div1 = document.createElement('div');
+                div1.innerHTML = x;
+                div1.style.fontWeight = 'bold';
+                parent.appendChild(div1);
+
+                const div2 = document.createElement('div');
+                div2.innerHTML = Y[i];
+                parent.appendChild(div2);
+
+                parent.innerHTML += '<br /><br />';
+              });
+            }
+
+            static getResults() {
+              return document.getElementById('results');
             }
           }
 
@@ -110,13 +138,6 @@
     </div>
     <br />  
     <br />  
-    <div id='element'>
-      <label>Kafka Element(s)</label>
-      <input type="text" style="width: 300px;">
-    </div>
-    <br />  
-    <div id='text'>
-      <input type="text" style="width: 300px;visibility: hidden;">
-    </div>
+    <div id='results'></div>
   </body>
 </html>
