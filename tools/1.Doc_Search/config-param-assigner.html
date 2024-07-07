@@ -22,13 +22,15 @@
             }
           }
 
-          class StringParser {
+          class Substring {
             index;
             token;
+            text;
 
-            constructor(index, token) {
+            constructor(index, token, text) {
               this.index = index;
               this.token = token;
+              this.text = text;
             }
           }
 
@@ -38,28 +40,36 @@
                 .then((t) => {
                   const tLength = t.length;
                   const kafkaElements = [];
-                  let stringParser = new StringParser(0, null);
+                  const kafkaTexts = [];
+                  let stringParser = new Substring(0, null, null);
                   while (stringParser.index > -1 && stringParser.index < tLength) {
                     stringParser = KafkaDocService.getNextIndexAndKafkaElement(t, property, stringParser.index);
                     if (stringParser.token !== null) {
                       kafkaElements.push(stringParser.token);
+                      kafkaTexts.push(stringParser.text);
                     }
                   }
-                  elementConsumer(kafkaElements);
+                  elementConsumer(kafkaElements, kafkaTexts);
                 });
             }
  
             static getNextIndexAndKafkaElement(t, property, currentIndex) {
               const index1 = t.indexOf('id="' + property + '"', currentIndex);
               if (index1 < 0) {
-                return new StringParser(index1, null);
+                return new Substring(index1, null);
               }
+
               const index2 = t.indexOf('<a id="', index1);
               const index3 = t.indexOf('" href="', index2);
               const kafkaElement = t.substring(index2 + '<a id="'.length, index3)
                 .replace('configs_', '')
                 .replace(property, '');
-                return new StringParser(index3 + 1, kafkaElement);
+
+              const index4 = t.indexOf('</a></h4>', index3);
+              const index5 = t.indexOf('</li>', index4);
+              const kafkaText = t.substring(index4 + '</a></h4>'.length, index5);
+
+              return new Substring(index3 + 1, kafkaElement, kafkaText);
             }
           }
 
@@ -67,7 +77,11 @@
             static setElements() {
               const version = document.getElementById('kafka-version').children[1].value.replaceAll('.','').substring(0, 2);
               const property = document.getElementById('property').children[1].value;
-              const elementConsumer = (x) => document.getElementById('element').children[1].value = x;
+              const elementConsumer = (x, y) => {
+                document.getElementById('element').children[1].value = x;
+                document.getElementById('text').children[0].outerHTML = y;
+                document.getElementById('text').children[0].style.visibility = 'visible';
+              };
               KafkaDocService.setElements(version, property, elementConsumer);
             }
           }
@@ -99,6 +113,10 @@
     <div id='element'>
       <label>Kafka Element(s)</label>
       <input type="text" style="width: 300px;">
+    </div>
+    <br />  
+    <div id='text'>
+      <input type="text" style="width: 300px;visibility: hidden;">
     </div>
   </body>
 </html>
