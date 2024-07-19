@@ -1,5 +1,7 @@
-<html>
+<!doctype html>
+<html lang='en'>
   <head>
+    <title>Search-Tool for Kafka-Documentation</title>
     <script>
         class RestController {
             static get(url, token) {
@@ -146,13 +148,13 @@
   </head>
   <body>
     <div id='kafka-version'>
-      <label>Kafka Version</label>
-      <input type='text'>
+      <label for='version'>Kafka Version</label>
+      <input type='text' name="'version">
     </div>
     <br />  
     <div id='property'>
-      <label>Configuration Property</label>
-      <input type="text">
+      <label for='property'>Configuration Property</label>
+      <input type="text" name='property'>
     </div>
     <br />  
     <div id='submit'>
