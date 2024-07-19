@@ -34,9 +34,22 @@
             }
           }
 
+          class KafkaDocContainer {
+            version;
+            content;
+
+            constructor(version, content) {
+              this.version = version;
+              this.content = content;
+            }
+          }
+
           class KafkaDocService {
+
+            static kafkaDocContainer = null;
+
             static setElements(version, property, elementConsumer) {
-              RestController.get("https://kafka.apache.org/" + version + "/documentation/", null)
+              KafkaDocService.getKafkaDoc(version)
                 .then((t) => {
                   const tLength = t.length;
                   const kafkaElements = [];
@@ -51,6 +64,15 @@
                   }
                   elementConsumer(kafkaElements, kafkaTexts);
                 });
+            }
+
+            static async getKafkaDoc(version) {
+              if (KafkaDocService.kafkaDocContainer !== null && KafkaDocService.kafkaDocContainer.version === version) {
+                return KafkaDocService.kafkaDocContainer.content;
+              }
+              const content = await RestController.get("https://kafka.apache.org/" + version + "/documentation/", null);
+              KafkaDocService.kafkaDocContainer = new KafkaDocContainer(version, content);
+              return content; 
             }
  
             static getNextIndexAndKafkaElement(t, property, currentIndex) {
