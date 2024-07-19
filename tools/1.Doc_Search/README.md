@@ -2,7 +2,7 @@
 
 ## Goal
 - Forward problem
-  - Listig all Apache Kafka configuration properties and the associated "entities" (ex. <i>ssl.engine.factory.class - producer</i>)
+  - Listing all Apache Kafka configuration properties and the associated "entities" (ex. <i>ssl.engine.factory.class - producer</i>)
 - Inverse problem
   - Finding the list of "entities" associated with a given configuration property
 
