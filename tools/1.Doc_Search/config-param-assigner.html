@@ -39,16 +39,20 @@
           class KafkaDocContainer {
             version;
             content;
+            propertyMap;
 
-            constructor(version, content) {
+            constructor(version, content, propertyMap) {
               this.version = version;
               this.content = content;
+              this.propertyMap = propertyMap;
             }
           }
 
           class KafkaDocService {
 
             static kafkaDocContainer = null;
+
+            static DEFAULT_VERSION = "37";
 
             static setElements(version, property, elementConsumer) {
               KafkaDocService.getKafkaDoc(version)
@@ -68,16 +72,18 @@
                 });
             }
 
-            static getAllParameters(t) {
-              const parameters = t.split('\n')
+            static getPropertyMap(t) {
+              const propertyList = t.split('\n')
                 .filter((x) => x.includes('<a id="') && x.includes('configs_') && x.includes(' href="#'))
                 .map((x) => {
-                  const parameterStartIndex = KafkaDocService.indexOfSubstringAfter(x, '<a id="');
-                  const parameterEndIndexExclusive = x.indexOf('configs_');
-                  return x.substring(parameterStartIndex, parameterEndIndexExclusive)
-                    .replace('"></a><a id="', ' - ');
+                  const propertyStartIndex = KafkaDocService.indexOfSubstringAfter(x, '<a id="');
+                  const propertyEndIndexExclusive = x.indexOf('configs_');
+                  return x.substring(propertyStartIndex, propertyEndIndexExclusive)
+                    .replace('"></a><a id="', '-').split('-');
                 });
-                return KafkaDocService.listToSet(parameters);
+                const propertySet = KafkaDocService.listToSet(propertyList);
+                const propertyMap = KafkaDocService.setToMap(propertySet);
+                return propertyMap;
             }
 
             static indexOfSubstringAfter(s, s0) {
@@ -88,13 +94,27 @@
               return array.filter((x, i) => array.indexOf(x) === i);
             }
 
-            static async getKafkaDoc(version) {
+            static setToMap(array) {
+              const map = {};
+              array.forEach((entry) => {
+                const value = entry[0];
+                const key = entry[1];
+                if (map[key] === null || map[key] === undefined) {
+                  map[key] = [];
+                }
+                map[key].push(value);
+              })
+              return map;
+            }
+
+            static async getKafkaDoc(version_) {
+              const version = (version_ === null || version_ === undefined) ? KafkaDocService.DEFAULT_VERSION : version_;
               if (KafkaDocService.kafkaDocContainer === null || KafkaDocService.kafkaDocContainer.version !== version) {
                 await RestController.get("https://kafka.apache.org/" + version + "/documentation/", null)
                 .then((content) => {
-                  KafkaDocService.kafkaDocContainer = new KafkaDocContainer(version, content);
-                  const parameters = KafkaDocService.getAllParameters(content);
-                  console.log(parameters);
+                  const propertyMap = KafkaDocService.getPropertyMap(content);
+                  console.log(propertyMap);
+                  KafkaDocService.kafkaDocContainer = new KafkaDocContainer(version, content, propertyMap);
                 });
               }
               return KafkaDocService.kafkaDocContainer.content; 
@@ -131,6 +151,10 @@
               KafkaDocService.setElements(version, property, elementConsumer);
             }
 
+            static setPropertyMap(propertyMap) {
+              document.getElementById('property-map').innerHTML = JSON.parse(JSON.stringify(propertyMap));
+            }
+
             static removeChildren(element) {
               while (element.hasChildNodes()) {
                 element.lastChild.remove();
@@ -159,11 +183,24 @@
             static getResults() {
               return document.getElementById('results');
             }
+
+            static runAfterLoadingDom(foo) {
+              return new Promise((resolve, reject) => {
+                document.addEventListener('DOMContentLoaded', () => {
+                  resolve(foo());
+                });
+              });
+            }
+
           }
 
           class App {
             static start() {
               DomService.setElements();
+            }
+
+            static setParameters() {
+              DomService.runAfterLoadingDom(KafkaDocService.getKafkaDoc);
             }
           }
 
@@ -172,12 +209,12 @@
   <body>
     <div id='kafka-version'>
       <label for='version'>Kafka Version</label>
-      <input type='text' name="'version">
+      <input type='text' name='version' value='3.7'>
     </div>
     <br />  
     <div id='property'>
       <label for='property'>Configuration Property</label>
-      <input type="text" name='property'>
+      <input type='text' name='property'>
     </div>
     <br />  
     <div id='submit'>
@@ -186,5 +223,8 @@
     <br />  
     <br />  
     <div id='results'></div>
+    <script>
+      App.setParameters();
+    </script>
   </body>
 </html>
