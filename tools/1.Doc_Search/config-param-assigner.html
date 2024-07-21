@@ -91,7 +91,7 @@
             }
 
             static listToSet(array) {
-              return array.filter((x, i) => array.indexOf(x) === i);
+              return array.filter((x, i) => array.indexOf(x) === i).sort((a, b) => a > b);
             }
 
             static setToMap(array) {
@@ -199,8 +199,8 @@
               DomService.setElements();
             }
 
-            static setParameters() {
-              DomService.runAfterLoadingDom(KafkaDocService.getKafkaDoc);
+            static async setParameters() {
+              await DomService.runAfterLoadingDom(KafkaDocService.getKafkaDoc);
             }
           }
 
