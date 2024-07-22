@@ -72,7 +72,7 @@
                 });
             }
 
-            static getPropertyMap(t) {
+            static getPropertyMap(t, version) {
               const propertyList = t.split('\n')
                 .filter((x) => x.includes('<a id="') && x.includes('configs_') && x.includes(' href="#'))
                 .map((x) => {
@@ -83,6 +83,7 @@
                 });
                 const propertySet = KafkaDocService.listToSet(propertyList);
                 const propertyMap = KafkaDocService.setToMap(propertySet);
+                propertyMap.version = version;
                 return propertyMap;
             }
 
@@ -112,7 +113,7 @@
               if (KafkaDocService.kafkaDocContainer === null || KafkaDocService.kafkaDocContainer.version !== version) {
                 await RestController.get("https://kafka.apache.org/" + version + "/documentation/", null)
                 .then((content) => {
-                  const propertyMap = KafkaDocService.getPropertyMap(content);
+                  const propertyMap = KafkaDocService.getPropertyMap(content, version);
                   console.log(propertyMap);
                   KafkaDocService.kafkaDocContainer = new KafkaDocContainer(version, content, propertyMap);
                 });
