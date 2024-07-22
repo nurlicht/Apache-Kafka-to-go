@@ -3,7 +3,6 @@
 ## Goal
 - Forward problem
   - Listing all Apache Kafka configuration properties and the associated "entities" (ex. <i>ssl.engine.factory.class - producer</i>)
-  - See also the [list of constants](https://kafka.apache.org/37/javadoc/constant-values.html) of the [Javadoc](https://kafka.apache.org/37/javadoc/index.html).
 - Inverse problem
   - Finding the list of "entities" associated with a given configuration property
 
@@ -14,3 +13,6 @@
 ## Expected Result
 ![](screenshot.png)
 
+## Miscellaneous
+  - [List of constants](https://kafka.apache.org/37/javadoc/constant-values.html) of the [Javadoc](https://kafka.apache.org/37/javadoc/index.html).
+  - [Kafka-scripts](https://github.com/apache/kafka/blob/trunk/bin/kafka-console-consumer.sh) and [associated classes](https://github.com/apache/kafka/blob/trunk/tools/src/main/java/org/apache/kafka/tools/consumer/ConsoleConsumer.java)
